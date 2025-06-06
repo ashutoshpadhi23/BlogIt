@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 ruby "3.3.5"
@@ -41,6 +43,8 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
 end
 
 group :development do
@@ -52,6 +56,7 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem "erb_lint", require: false, git: "https://github.com/Shopify/erb-lint.git", branch: "main"
 end
 
 group :test do
@@ -60,4 +65,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'react-rails', "~> 2.7.1"
+gem "react-rails", "~> 2.7.1"
