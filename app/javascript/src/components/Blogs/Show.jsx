@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from "react";
+
+import postApi from "apis/posts";
+import { Button, PageLoader } from "components/commons";
+import { useHistory, useParams } from "react-router-dom";
+
+const Show = () => {
+  const [post, setPost] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
+  const { slug } = useParams();
+  const history = useHistory();
+
+  const updateTask = () => {
+    history.push(`/blogs/${post.slug}/edit`);
+  };
+
+  const fetchPostDetails = async () => {
+    try {
+      const {
+        data: { post },
+      } = await postApi.show(slug);
+      setPost(post);
+      setPageLoading(false);
+    } catch (error) {
+      logger.error(error);
+      history.push("/");
+    }
+  };
+
+  useEffect(() => {
+    fetchPostDetails();
+  }, []);
+
+  if (pageLoading) {
+    return <PageLoader />;
+  }
+
+  return (
+    <div className="flex flex-col gap-y-8">
+      <div className="mt-8 flex w-full items-start justify-between gap-x-6">
+        <div className="flex flex-col gap-y-2">
+          <h2 className="text-3xl font-semibold">{post?.title}</h2>
+        </div>
+        <p className="text-sm text-gray-500">{post?.description}</p>
+        <div className="flex items-center justify-end gap-x-3">
+          <Button
+            buttonText="Edit"
+            icon="edit-line"
+            size="small"
+            style="secondary"
+            onClick={updateTask}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Show;

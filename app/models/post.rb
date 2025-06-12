@@ -16,13 +16,13 @@ class Post < ApplicationRecord
     def set_slug
       title_slug = title.parameterize
       regex_pattern = "slug #{Constants::DB_REGEX_OPERATOR} ?"
-      latest_task_slug = Task.where(
+      latest_post_slug = Post.where(
         regex_pattern,
         "^#{title_slug}$|^#{title_slug}-[0-9]+$"
       ).order("LENGTH(slug) DESC", slug: :desc).first&.slug
       slug_count = 0
-      if latest_task_slug.present?
-        slug_count = latest_task_slug.split("-").last.to_i
+      if latest_post_slug.present?
+        slug_count = latest_post_slug.split("-").last.to_i
         only_one_slug_exists = slug_count == 0
         slug_count = 1 if only_one_slug_exists
       end

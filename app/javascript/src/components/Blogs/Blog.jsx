@@ -1,6 +1,6 @@
 import React from "react";
 
-const Blog = ({ title, description, date }) => (
+const Blog = ({ title, description, date, showBlog, blog }) => (
   <div className="mt-6 w-full space-y-4 border-b-2 border-gray-200 pb-2">
     <div className="text-2xl font-bold">{title}</div>
     <div className="space-y-2">
@@ -8,6 +8,9 @@ const Blog = ({ title, description, date }) => (
         {description}
       </div>
       <div className="text-xs font-medium text-gray-600">{date}</div>
+      <a className="text-indigo-600" onClick={() => showBlog(blog.slug)}>
+        Show
+      </a>
     </div>
   </div>
 );
