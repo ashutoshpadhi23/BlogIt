@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Book, List } from "@bigbinary/neeto-icons";
+import { Book, List, Edit, ListDetails } from "@bigbinary/neeto-icons";
 import classNames from "classnames";
 import { useLocation, Link } from "react-router-dom";
 
@@ -25,6 +25,28 @@ const Sidebar = () => {
             className={classNames(
               "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",
               { "bg-black text-white": location.pathname === routes.blogs }
+            )}
+          />
+        </Link>
+      </div>
+      <div>
+        <Link to="/blogs/create">
+          <Edit
+            size={24}
+            className={classNames(
+              "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",
+              { "bg-black text-white": location.pathname === "/blogs/create" }
+            )}
+          />
+        </Link>
+      </div>
+      <div>
+        <Link to="/blogs/filter">
+          <ListDetails
+            size={24}
+            className={classNames(
+              "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",
+              { "bg-black text-white": location.pathname === "/blogs/filter" }
             )}
           />
         </Link>

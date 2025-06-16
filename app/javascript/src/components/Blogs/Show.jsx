@@ -4,6 +4,9 @@ import postApi from "apis/posts";
 import { Button, PageLoader } from "components/commons";
 import { useHistory, useParams } from "react-router-dom";
 
+import { formatDate } from "../../utils/formatDate";
+import Profile from "../commons/Profile";
+
 const Show = () => {
   const [post, setPost] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
@@ -37,11 +40,15 @@ const Show = () => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <div className="mt-8 flex w-full items-start justify-between gap-x-6">
+      <div className="flex space-x-2">
+        {post.categories.map(category => (
+          <div key={category.id}>{category.name}</div>
+        ))}
+      </div>
+      <div className="flex w-full items-start justify-between gap-x-6">
         <div className="flex flex-col gap-y-2">
           <h2 className="text-3xl font-semibold">{post?.title}</h2>
         </div>
-        <p className="text-sm text-gray-500">{post?.description}</p>
         <div className="flex items-center justify-end gap-x-3">
           <Button
             buttonText="Edit"
@@ -52,6 +59,14 @@ const Show = () => {
           />
         </div>
       </div>
+      <div className="flex space-x-2">
+        <Profile />
+        <div className="text-sm text-gray-500">
+          <p>{post?.user?.name}</p>
+          <p>{formatDate(post.created_at)}</p>
+        </div>
+      </div>
+      <p className="text-sm text-gray-500">{post?.description}</p>
     </div>
   );
 };

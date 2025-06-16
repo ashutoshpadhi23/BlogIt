@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Logger from "js-logger";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import Blog from "./Blog";
 
@@ -10,9 +10,19 @@ import { formatDate } from "../../utils/formatDate";
 import PageLoader from "../commons/PageLoader";
 import PageTitle from "../commons/PageTitle";
 
-const Blogs = ({ history }) => {
+const Blogs = ({ history, fetchFiltered = false }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { searchTerm } = useLocation();
+  const params = new URLSearchParams(searchTerm);
+  const filterParams = {};
+  for (const [key, value] of params.entries()) {
+    if (filterParams[key]) {
+      filterParams[key] = [].concat(filterParams[key], value);
+    } else {
+      filterParams[key] = value;
+    }
+  }
 
   const showBlog = slug => {
     history.push(`/blogs/${slug}/show`);
@@ -31,24 +41,43 @@ const Blogs = ({ history }) => {
     }
   };
 
+  const fetchFilteredBlogs = async () => {
+    try {
+      const {
+        data: { posts },
+      } = await postApi.fetch(filterParams);
+      setBlogs(posts);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      logger.error(error);
+    }
+  };
+
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    if (fetchFiltered) {
+      fetchFilteredBlogs();
+    } else {
+      fetchBlogs();
+    }
+  }, [fetchFiltered, searchTerm]);
 
   if (loading) {
     return <PageLoader />;
   }
 
   return (
-    <div>
-      <PageTitle title="Blog posts" />
-      <Link
-        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:shadow"
-        to="/blogs/create"
-      >
-        Add new task
-      </Link>
-      <div>
+    <div className="h-full">
+      <div className="flex justify-between">
+        <PageTitle title="Blog posts" />
+        <Link
+          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:shadow"
+          to="/blogs/create"
+        >
+          Add new task
+        </Link>
+      </div>
+      <div className="h-full overflow-y-auto">
         {blogs.map(blog => (
           <div key={blog.id}>
             <Blog
