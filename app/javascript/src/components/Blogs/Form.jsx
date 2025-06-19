@@ -1,6 +1,8 @@
 import React from "react";
 
 import { Input, Button } from "components/commons";
+import { Textarea } from "neetoui";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Select from "react-select";
 
 const Form = ({
@@ -18,6 +20,7 @@ const Form = ({
     value: category.id,
     label: category.name,
   }));
+  const history = useHistory();
   // const defaultOption = { value: categoryId, label: category.name };
   // const initialValues = useRef({
   //   title,
@@ -47,17 +50,25 @@ const Form = ({
           />
         </div>
       </div>
-      <Input
+      <Textarea
         label="Description"
-        placeholder="Todo Title (Max 50 Characters Allowed)"
+        placeholder="Todo Description (Max 100 Characters Allowed)"
+        rows={15}
         value={description}
-        onChange={e => setDescription(e.target.value.slice(0, 100))}
+        onChange={event => setDescription(event.target.value)}
       />
-      <Button
-        buttonText={type === "create" ? "Create Task" : "Update Task"}
-        loading={loading}
-        type="submit"
-      />
+      <div className="flex gap-x-2">
+        <Button
+          buttonText="Cancel"
+          loading={loading}
+          onClick={() => history.push("/blogs")}
+        />
+        <Button
+          buttonText={type === "create" ? "Submit" : "Update Task"}
+          loading={loading}
+          type="submit"
+        />
+      </div>
     </form>
   );
 };

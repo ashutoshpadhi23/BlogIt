@@ -13,8 +13,8 @@ import PageTitle from "../commons/PageTitle";
 const Blogs = ({ history, fetchFiltered = false }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { searchTerm } = useLocation();
-  const params = new URLSearchParams(searchTerm);
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
   const filterParams = {};
   for (const [key, value] of params.entries()) {
     if (filterParams[key]) {
@@ -60,7 +60,7 @@ const Blogs = ({ history, fetchFiltered = false }) => {
     } else {
       fetchBlogs();
     }
-  }, [fetchFiltered, searchTerm]);
+  }, [fetchFiltered, search]);
 
   if (loading) {
     return <PageLoader />;
@@ -74,7 +74,7 @@ const Blogs = ({ history, fetchFiltered = false }) => {
           className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:shadow"
           to="/blogs/create"
         >
-          Add new task
+          Add new blog post
         </Link>
       </div>
       <div className="h-full overflow-y-auto">
@@ -90,6 +90,7 @@ const Blogs = ({ history, fetchFiltered = false }) => {
           </div>
         ))}
       </div>
+      {Logger.info(blogs)}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import postApi from "apis/posts";
 import { Button, PageLoader } from "components/commons";
+import { Tag } from "neetoui";
 import { useHistory, useParams } from "react-router-dom";
 
 import { formatDate } from "../../utils/formatDate";
@@ -42,7 +43,7 @@ const Show = () => {
     <div className="flex flex-col gap-y-8">
       <div className="flex space-x-2">
         {post.categories.map(category => (
-          <div key={category.id}>{category.name}</div>
+          <Tag key={category.id}>{category.name}</Tag>
         ))}
       </div>
       <div className="flex w-full items-start justify-between gap-x-6">
