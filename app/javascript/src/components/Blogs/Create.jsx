@@ -56,12 +56,13 @@ const Create = ({ history }) => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <PageTitle title="Add new task" />
+      <PageTitle title="New blog post" />
       <Form
         allCategories={allCategories}
         categories={categories}
         category={category}
         categoryId={categoryId}
+        description={description}
         handleSubmit={handleSubmit}
         loading={loading}
         setAllCategories={setAllCategories}

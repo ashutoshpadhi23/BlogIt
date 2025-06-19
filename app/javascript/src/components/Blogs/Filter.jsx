@@ -35,7 +35,7 @@ const Filter = () => {
 
   useEffect(() => {
     fetchCategoryDetails();
-  }, [categories]);
+  }, []);
 
   useEffect(() => {
     const sortedSelected = [...selectedCategories].sort();
@@ -54,6 +54,7 @@ const Filter = () => {
   const handleCreateCategory = async name => {
     try {
       await categoriesApi.create({ name });
+      fetchCategoryDetails();
       setShowModal(false);
       setIsLoading(false);
     } catch (error) {
