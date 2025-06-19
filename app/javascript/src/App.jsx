@@ -1,11 +1,13 @@
 import React from "react";
 
+import { Typography } from "@bigbinary/neetoui";
 import {
   Route,
   Switch,
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 import Blogs from "./components/Blogs";
 import CreatePost from "./components/Blogs/Create";
@@ -16,6 +18,8 @@ import { routes } from "./constants/routes";
 
 const App = () => (
   <Router>
+    <ToastContainer />
+    <Typography style="h3">Hello</Typography>
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 overflow-hidden p-12">
