@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Book, List, Edit, ListDetails } from "@bigbinary/neeto-icons";
+import { Book, List, Edit, Folder, ListDetails } from "@bigbinary/neeto-icons";
 import authApi from "apis/auth";
 import { resetAuthTokens } from "apis/axios";
 import classNames from "classnames";
@@ -14,6 +14,7 @@ import { routes } from "../../constants/routes";
 const Sidebar = () => {
   const location = useLocation();
   const userName = getFromLocalStorage("authUserName");
+  const userId = getFromLocalStorage("authUserId");
   const email = getFromLocalStorage("authEmail");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const menuRef = useRef();
@@ -84,6 +85,17 @@ const Sidebar = () => {
       <div>
         <Link to="/blogs/filter">
           <ListDetails
+            size={24}
+            className={classNames(
+              "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",
+              { "bg-black text-white": location.pathname === "/blogs/filter" }
+            )}
+          />
+        </Link>
+      </div>
+      <div>
+        <Link to={`blogs/user/${userName}-${userId}`}>
+          <Folder
             size={24}
             className={classNames(
               "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",

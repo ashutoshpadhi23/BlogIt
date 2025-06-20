@@ -8,6 +8,7 @@ import CreatePost from "components/Blogs/Create";
 import EditPost from "components/Blogs/Edit";
 import FilterPost from "components/Blogs/Filter";
 import ShowPost from "components/Blogs/Show";
+import { Table } from "components/Blogs/Table";
 import { PrivateRoute } from "components/commons";
 import Sidebar from "components/commons/Sidebar";
 import { either, isEmpty, isNil } from "ramda";
@@ -22,6 +23,8 @@ import { getFromLocalStorage } from "utils/storage";
 
 const App = () => {
   const authToken = getFromLocalStorage("authToken");
+  const userName = getFromLocalStorage("authUserName");
+  const userId = getFromLocalStorage("authUserId");
   const isLoggedIn = !either(isNil, isEmpty)(authToken);
 
   return (
@@ -36,6 +39,11 @@ const App = () => {
             <Route exact component={FilterPost} path="/blogs/filter" />
             <Route exact component={ShowPost} path="/blogs/:slug/show" />
             <Route exact component={EditPost} path="/blogs/:slug/edit" />
+            <Route
+              exact
+              component={Table}
+              path={`/blogs/user/${userName}-${userId}`}
+            />
             <Route exact component={Signup} path="/signup" />
             <Route exact component={Login} path="/login" />
             <PrivateRoute

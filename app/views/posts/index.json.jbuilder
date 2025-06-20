@@ -9,7 +9,8 @@ json.posts @posts do |post|
     :downvotes,
     :created_at,
     :updated_at,
-    :slug
+    :slug,
+    :status
 
   json.categories post.categories do |category|
     json.extract! category,

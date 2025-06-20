@@ -14,14 +14,16 @@ const Edit = ({ history }) => {
   const [categories, setCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // const history = useHistory();
+  const [status, setStatus] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [user, setUser] = useState("");
 
   const { slug } = useParams();
   const fetchPostDetails = async () => {
     try {
       const {
         data: {
-          post: { title, description, categories },
+          post: { title, description, categories, status, updated_at, user },
         },
       } = await postApi.show(slug);
       setTitle(title);
@@ -32,6 +34,9 @@ const Edit = ({ history }) => {
           label: category.name,
         }))
       );
+      setStatus(status);
+      setUpdatedAt(updated_at);
+      setUser(user);
     } catch (error) {
       Logger.info(error);
     }
@@ -48,8 +53,7 @@ const Edit = ({ history }) => {
     }
   };
 
-  const editPost = async event => {
-    event.preventDefault();
+  const editPost = async () => {
     setIsLoading(true);
     try {
       await postApi.update({
@@ -58,6 +62,7 @@ const Edit = ({ history }) => {
           title,
           description,
           category_ids: categories.map(category => category.value),
+          status,
         },
       });
       history.push("/");
@@ -73,6 +78,15 @@ const Edit = ({ history }) => {
     setIsLoading(false);
   };
 
+  const destroyPost = async () => {
+    try {
+      await postApi.destroy(slug);
+      history.push("/");
+    } catch (error) {
+      Logger.error(error);
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -82,19 +96,24 @@ const Edit = ({ history }) => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-5">
       <PageTitle title="Edit task" />
       <Form
         allCategories={allCategories}
         categories={categories}
         description={description}
+        destroyPost={destroyPost}
         handleSubmit={editPost}
         loading={isLoading}
         setCategories={setCategories}
         setDescription={setDescription}
+        setStatus={setStatus}
         setTitle={setTitle}
+        status={status}
         title={title}
         type="update"
+        updatedAt={updatedAt}
+        user={user}
       />
     </div>
   );

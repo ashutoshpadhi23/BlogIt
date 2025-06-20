@@ -14,6 +14,7 @@ const Create = ({ history }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("draft");
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -23,6 +24,7 @@ const Create = ({ history }) => {
         title,
         description,
         category_ids: categories.map(category => category.value),
+        status,
       });
       setLoading(false);
       history.push("/blogs");
@@ -61,7 +63,9 @@ const Create = ({ history }) => {
         setAllCategories={setAllCategories}
         setCategories={setCategories}
         setDescription={setDescription}
+        setStatus={setStatus}
         setTitle={setTitle}
+        status={status}
       />
     </div>
   );

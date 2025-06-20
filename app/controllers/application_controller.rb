@@ -2,7 +2,6 @@
 
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
-  rescue_from Pundit::NotAuthorizedError, with: :handle_authorization_error
   protect_from_forgery
   before_action :authenticate_user_using_x_auth_token
 
@@ -64,6 +63,8 @@ class ApplicationController < ActionController::Base
   def render_json(json = {}, status = :ok)
     render status:, json:
   end
+
+  rescue_from Pundit::NotAuthorizedError, with: :handle_authorization_error
 
   private
 

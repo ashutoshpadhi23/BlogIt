@@ -3,7 +3,7 @@
 class PostsController < ApplicationController
   after_action :verify_authorized, except: :index
   after_action :verify_policy_scoped, only: :index
-  before_action :load_post!, only: %i[show update]
+  before_action :load_post!, only: %i[show update destroy]
   def index
     # @posts = Post.all.as_json(include: [:user, :categories])
     @posts = policy_scope(Post)
@@ -28,13 +28,19 @@ class PostsController < ApplicationController
   def update
     authorize @post
     @post.update!(post_params)
-    render_notice("Post was successfully updated")
+    render_notice("Post was successfully updated") unless params.key?(:quiet)
+  end
+
+  def destroy
+    authorize @post
+    @post.destroy!
+    render_json
   end
 
   private
 
     def post_params
-      params.require(:post).permit(:title, :description, category_ids: [])
+      params.require(:post).permit(:title, :description, :status, category_ids: [])
     end
 
     def load_post!
