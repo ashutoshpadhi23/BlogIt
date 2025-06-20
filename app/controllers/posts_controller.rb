@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  before_action :load_post!, only: %i[show]
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
+  before_action :load_post!, only: %i[show update]
   def index
     # @posts = Post.all.as_json(include: [:user, :categories])
-    @posts = Post.all.includes(:categories, user: :organization)
+    @posts = policy_scope(Post)
+    @posts = @posts.all.includes(:categories, user: :organization)
     @posts = filter_posts_by_category_name_or_category_id(@posts)
     # render status: :ok, json: { posts: }
     render
@@ -12,20 +15,26 @@ class PostsController < ApplicationController
 
   def create
     post = Post.new(post_params)
+    post.user_id = current_user.id
+    authorize post
     post.save!
     render_notice("Post created successfully")
   end
 
   def show
-    # render_json({ post: @post })
-    single_post = @post.as_json(include: [:user, :categories])
-    render status: :ok, json: { post: single_post }
+    authorize @post
+  end
+
+  def update
+    authorize @post
+    @post.update!(post_params)
+    render_notice("Post was successfully updated")
   end
 
   private
 
     def post_params
-      params.require(:post).permit(:title, :description, :user_id, category_ids: [])
+      params.require(:post).permit(:title, :description, category_ids: [])
     end
 
     def load_post!

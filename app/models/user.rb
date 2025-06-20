@@ -6,9 +6,10 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i.freeze
   MAX_EMAIL_LENGTH = 255
 
-  has_many :posts
+  has_many :posts, dependent: :destroy
   belongs_to :organization
   has_secure_password
+  has_secure_token :authentication_token
 
   validates :name, presence: true, length: { maximum: MAX_NAME_LENGTH }
   validates :email, presence: true,

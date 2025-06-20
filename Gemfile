@@ -65,4 +65,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem "pundit"
 gem "react-rails", "~> 2.7.1"

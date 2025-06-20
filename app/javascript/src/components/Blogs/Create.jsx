@@ -12,8 +12,6 @@ const Create = ({ history }) => {
   const [title, setTitle] = useState("");
   const [categories, setCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
-  const [category, setCategory] = useState({});
-  const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +23,6 @@ const Create = ({ history }) => {
         title,
         description,
         category_ids: categories.map(category => category.value),
-        user_id: 1,
       });
       setLoading(false);
       history.push("/blogs");
@@ -41,8 +38,6 @@ const Create = ({ history }) => {
         data: { categories },
       } = await categoriesApi.fetch();
       setAllCategories(categories);
-      setCategory(categories[0]);
-      setCategoryId(categories[0].id);
     } catch (error) {
       logger.error(error);
     } finally {
@@ -60,15 +55,11 @@ const Create = ({ history }) => {
       <Form
         allCategories={allCategories}
         categories={categories}
-        category={category}
-        categoryId={categoryId}
         description={description}
         handleSubmit={handleSubmit}
         loading={loading}
         setAllCategories={setAllCategories}
         setCategories={setCategories}
-        setCategory={setCategory}
-        setCategoryId={setCategoryId}
         setDescription={setDescription}
         setTitle={setTitle}
       />

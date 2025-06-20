@@ -9,6 +9,7 @@ const Form = ({
   type = "create",
   title,
   setTitle,
+  categories,
   setCategories,
   description,
   setDescription,
@@ -16,19 +17,15 @@ const Form = ({
   handleSubmit,
   allCategories,
 }) => {
+  const history = useHistory();
+
   const categoryOptions = allCategories.map(category => ({
     value: category.id,
     label: category.name,
   }));
-  const history = useHistory();
-  // const defaultOption = { value: categoryId, label: category.name };
-  // const initialValues = useRef({
-  //   title,
-  //   categoryId: category.id,
-  // });
 
   return (
-    <form className="mb-4 w-full space-y-2" onSubmit={handleSubmit}>
+    <form className="mb-4 w-full space-y-4" onSubmit={handleSubmit}>
       <Input
         label="Title"
         placeholder="Todo Title (Max 50 Characters Allowed)"
@@ -36,35 +33,33 @@ const Form = ({
         onChange={e => setTitle(e.target.value.slice(0, 50))}
       />
       <div className="flex flex-col">
-        <p className="text-sm font-medium leading-none text-gray-800">
-          Category
-        </p>
-        <div className="mt-1 w-full">
-          <Select
-            isMulti
-            isSearchable
-            // defaultValue={defaultOption}
-            menuPosition="fixed"
-            options={categoryOptions}
-            onChange={selected => setCategories(selected)}
-          />
-        </div>
+        <label className="mb-1 text-sm font-medium text-gray-800">
+          Categories
+        </label>
+        <Select
+          isMulti
+          isSearchable
+          menuPosition="fixed"
+          options={categoryOptions}
+          value={categories}
+          onChange={selected => setCategories(selected)}
+        />
       </div>
       <Textarea
         label="Description"
         placeholder="Todo Description (Max 100 Characters Allowed)"
-        rows={15}
+        rows={8}
         value={description}
-        onChange={event => setDescription(event.target.value)}
+        onChange={event => setDescription(event.target.value.slice(0, 100))}
       />
-      <div className="flex gap-x-2">
+      <div className="flex gap-x-2 pt-2">
         <Button
           buttonText="Cancel"
           loading={loading}
           onClick={() => history.push("/blogs")}
         />
         <Button
-          buttonText={type === "create" ? "Submit" : "Update Task"}
+          buttonText={type === "create" ? "Submit" : "Update"}
           loading={loading}
           type="submit"
         />
