@@ -82,7 +82,7 @@ const Blogs = ({ history, fetchFiltered = false }) => {
           <div key={blog.id}>
             <Blog
               blog={blog}
-              date={formatDate(blog.created_at)}
+              date={formatDate(blog.updated_at)}
               description={blog.description}
               showBlog={showBlog}
               title={blog.title}

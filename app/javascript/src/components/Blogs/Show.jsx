@@ -64,7 +64,7 @@ const Show = () => {
         <Profile />
         <div className="text-sm text-gray-500">
           <p>{post?.user?.name}</p>
-          <p>{formatDate(post.created_at)}</p>
+          <p>{formatDate(post.updated_at)}</p>
         </div>
       </div>
       <p className="text-sm text-gray-500">{post?.description}</p>

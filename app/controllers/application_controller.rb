@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include Pundit::Authorization
+  rescue_from Pundit::NotAuthorizedError, with: :handle_authorization_error
   protect_from_forgery
+  before_action :authenticate_user_using_x_auth_token
 
   rescue_from StandardError, with: :handle_api_exception
 
@@ -61,4 +64,28 @@ class ApplicationController < ActionController::Base
   def render_json(json = {}, status = :ok)
     render status:, json:
   end
+
+  private
+
+    def authenticate_user_using_x_auth_token
+      user_email = request.headers["X-Auth-Email"].presence
+      auth_token = request.headers["X-Auth-Token"].presence
+      user = user_email && User.find_by!(email: user_email)
+      is_valid_token = user && auth_token && ActiveSupport::SecurityUtils.secure_compare(
+        user.authentication_token,
+        auth_token)
+      if is_valid_token
+        @current_user = user
+      else
+        render_error("Could not authenticate with the provided credentials", :unauthorized)
+      end
+    end
+
+    def current_user
+      @current_user
+    end
+
+    def handle_authorization_error
+      render_error("Access denied. You are not authorized to perform this action.", :forbidden)
+    end
 end
