@@ -20,6 +20,7 @@ const alias = {
   stream: require.resolve("stream-browserify"),
   apis: absolutePath("src/apis"),
   common: absolutePath("src/common"),
+  commons: absolutePath("src/components/commons"),
   components: absolutePath("src/components"),
   constants: absolutePath("src/constants"),
   neetoui: "@bigbinary/neetoui",
