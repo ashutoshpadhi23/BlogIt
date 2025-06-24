@@ -94,12 +94,15 @@ const Sidebar = () => {
         </Link>
       </div>
       <div>
-        <Link to={`blogs/user/${userName}-${userId}`}>
+        <Link to={`/blogs/user/${userName}-${userId}`}>
           <Folder
             size={24}
             className={classNames(
               "flex h-8  w-8  cursor-pointer items-center justify-center rounded-md  p-1  hover:bg-gray-600 hover:text-white",
-              { "bg-black text-white": location.pathname === "/blogs/filter" }
+              {
+                "bg-black text-white":
+                  location.pathname === `/blogs/user/${userName}-${userId}`,
+              }
             )}
           />
         </Link>

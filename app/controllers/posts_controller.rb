@@ -9,6 +9,7 @@ class PostsController < ApplicationController
     @posts = policy_scope(Post)
     @posts = @posts.all.includes(:categories, user: :organization)
     @posts = filter_posts_by_category_name_or_category_id(@posts)
+    @posts = filter_posts_by_user_id(@posts) if params[:user_id].present?
     # render status: :ok, json: { posts: }
     render
   end
@@ -40,7 +41,7 @@ class PostsController < ApplicationController
   private
 
     def post_params
-      params.require(:post).permit(:title, :description, :status, category_ids: [])
+      params.require(:post).permit(:title, :description, :status, :user_id, category_ids: [])
     end
 
     def load_post!
@@ -72,5 +73,10 @@ class PostsController < ApplicationController
       else
         base_scope.all
       end
+    end
+
+    def filter_posts_by_user_id(base_scope)
+      base_scope = base_scope.includes(user: :organization)
+      base_scope.where(user_id: params[:user_id])
     end
 end

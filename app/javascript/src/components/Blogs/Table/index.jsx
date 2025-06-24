@@ -1,15 +1,16 @@
 import React from "react";
 
-const Table = () => {
-  const user = 1;
+import { Table } from "neetoui";
 
-  return (
-    <div>
-      Table
-      <p>WOrks</p>
-      <p>{user}</p>
-    </div>
-  );
-};
+const PostsTable = ({ data, columns }) => (
+  <div className="p-4">
+    <Table
+      columnData={columns}
+      enableColumnFreeze={false}
+      enableColumnResize={false}
+      rowData={data}
+    />
+  </div>
+);
 
-export default Table;
+export default PostsTable;

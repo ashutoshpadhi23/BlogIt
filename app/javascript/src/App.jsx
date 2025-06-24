@@ -8,7 +8,7 @@ import CreatePost from "components/Blogs/Create";
 import EditPost from "components/Blogs/Edit";
 import FilterPost from "components/Blogs/Filter";
 import ShowPost from "components/Blogs/Show";
-import { Table } from "components/Blogs/Table";
+import UserBlogs from "components/Blogs/UserBlogs";
 import { PrivateRoute } from "components/commons";
 import Sidebar from "components/commons/Sidebar";
 import { either, isEmpty, isNil } from "ramda";
@@ -41,7 +41,7 @@ const App = () => {
             <Route exact component={EditPost} path="/blogs/:slug/edit" />
             <Route
               exact
-              component={Table}
+              component={UserBlogs}
               path={`/blogs/user/${userName}-${userId}`}
             />
             <Route exact component={Signup} path="/signup" />
