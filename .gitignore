@@ -121,3 +121,4 @@ dump.rdb
 
 # Ignore build files
 /app/assets/builds
+coverage
