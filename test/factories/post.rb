@@ -9,7 +9,7 @@ FactoryBot.define do
     is_bloggable { [true, false].sample }
     status { %w[draft published].sample }
     association :user, factory: :user
-    after(:create) do |post|
+    after(:build) do |post|
       post.categories << create(:category)
     end
   end

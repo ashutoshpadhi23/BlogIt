@@ -16,6 +16,15 @@ end
 
 enable_test_coverage if ENV["COVERAGE"]
 
+def headers(user, options = {})
+  {
+    Accept: "application/json",
+    "Content_Type" => "application/json",
+    "X-Auth-Token" => user.authentication_token,
+    "X-Auth-Email" => user.email
+  }.merge(options)
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
@@ -26,9 +35,9 @@ require_relative "../config/environment"
 require "rails/test_help"
 
 module ActiveSupport
-  include FactoryBot::Syntax::Methods
   class TestCase
     # Run tests in parallel with specified workers
+    include FactoryBot::Syntax::Methods
     parallelize(workers: :number_of_processors) unless ENV["COVERAGE"]
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
