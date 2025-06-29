@@ -10,6 +10,8 @@ class PostsController < ApplicationController
     @posts = @posts.all.includes(:categories, user: :organization)
     @posts = filter_posts_by_category_name_or_category_id(@posts)
     @posts = filter_posts_by_user_id(@posts) if params[:user_id].present?
+    @posts = @posts.where("title LIKE ?", "%#{params[:title]}%") if params[:title].present?
+    @posts = @posts.where(status: params[:status]) if params[:status].present?
     # render status: :ok, json: { posts: }
     render
   end
@@ -26,16 +28,48 @@ class PostsController < ApplicationController
     authorize @post
   end
 
+  # def update
+  #   authorize @post
+  #   @post.update!(post_params)
+  #   render_notice("Post was successfully updated") unless params.key?(:quiet)
+  # end
+
+  # def destroy
+  #   authorize @post
+  #   @post.destroy!
+  #   render_json
+  # end
+
   def update
     authorize @post
-    @post.update!(post_params)
-    render_notice("Post was successfully updated") unless params.key?(:quiet)
+    retries ||= 0
+    begin
+      @post.update!(post_params)
+      render_notice("Post was successfully updated") unless params.key?(:quiet)
+    rescue ActiveRecord::StatementInvalid => e
+      if e.message =~ /database is locked/i && (retries += 1) <= 3
+        sleep(0.2 * retries)
+        retry
+      else
+        render_error(e.message, :unprocessable_entity)
+      end
+    end
   end
 
   def destroy
     authorize @post
-    @post.destroy!
-    render_json
+    retries ||= 0
+    begin
+      @post.destroy!
+      render_json
+    rescue ActiveRecord::StatementInvalid => e
+      if e.message =~ /database is locked/i && (retries += 1) <= 3
+        sleep(0.2 * retries)
+        retry
+      else
+        render_error(e.message, :unprocessable_entity)
+      end
+    end
   end
 
   private

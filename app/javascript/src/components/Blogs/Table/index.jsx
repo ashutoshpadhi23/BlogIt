@@ -1,14 +1,14 @@
 import React from "react";
 
-import { Table } from "neetoui";
+import { Table } from "antd";
 
-const PostsTable = ({ data, columns }) => (
+const PostsTable = ({ data, columns, rowSelection }) => (
   <div className="p-4">
     <Table
-      columnData={columns}
-      enableColumnFreeze={false}
-      enableColumnResize={false}
-      rowData={data}
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      rowSelection={rowSelection}
     />
   </div>
 );
