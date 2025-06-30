@@ -15,6 +15,7 @@ const Blogs = ({ history, fetchFiltered = false }) => {
   const [loading, setLoading] = useState(true);
   const { search } = useLocation();
   const params = new URLSearchParams(search);
+
   const filterParams = {};
   for (const [key, value] of params.entries()) {
     if (filterParams[key]) {

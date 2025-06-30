@@ -10,7 +10,10 @@ json.posts @posts do |post|
     :created_at,
     :updated_at,
     :slug,
-    :status
+    :status,
+    :is_bloggable
+
+  json.current_user_vote post.post_votes.find_by(user: @current_user)&.vote_type
 
   json.categories post.categories do |category|
     json.extract! category,

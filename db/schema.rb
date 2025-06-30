@@ -36,7 +36,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_29_131713) do
   create_table "post_votes", force: :cascade do |t|
     t.integer "post_id", null: false
     t.integer "user_id", null: false
-    t.integer "vote_type", default: 0, null: false
+    t.string "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["post_id", "user_id"], name: "index_post_votes_on_post_id_and_user_id", unique: true

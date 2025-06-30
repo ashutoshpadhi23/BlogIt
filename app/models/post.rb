@@ -6,6 +6,7 @@ class Post < ApplicationRecord
 
   enum :status, { draft: "draft", published: "published" }, default: :draft
   belongs_to :user
+  has_many :post_votes, dependent: :destroy
   has_and_belongs_to_many :categories
   # belongs_to :organization, through: :user
 
@@ -17,6 +18,15 @@ class Post < ApplicationRecord
   validate :slug_not_changed
 
   before_create :set_slug
+
+  def net_votes
+    upvotes - downvotes
+  end
+
+  def update_bloggable_status!
+    threshold = Rails.application.config.bloggable_threshold
+    update!(is_bloggable: net_votes > threshold)
+  end
 
   private
 

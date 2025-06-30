@@ -21,6 +21,8 @@ const destroy = ({ slug, quiet = false }) => {
   axios.delete(path);
 };
 
-const postApi = { fetch, show, create, update, destroy };
+const vote = (slug, payload) => axios.post(`/posts/${slug}/vote`, payload);
+
+const postApi = { fetch, show, create, update, destroy, vote };
 
 export default postApi;

@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  after_action :verify_authorized, except: :index
+  after_action :verify_authorized, except: [:index, :vote]
   after_action :verify_policy_scoped, only: :index
-  before_action :load_post!, only: %i[show update destroy]
+  before_action :load_post!, only: %i[show update destroy vote]
   def index
-    # @posts = Post.all.as_json(include: [:user, :categories])
     @posts = policy_scope(Post)
     @posts = @posts.all.includes(:categories, user: :organization)
     @posts = filter_posts_by_category_name_or_category_id(@posts)
     @posts = filter_posts_by_user_id(@posts) if params[:user_id].present?
     @posts = @posts.where("title LIKE ?", "%#{params[:title]}%") if params[:title].present?
     @posts = @posts.where(status: params[:status]) if params[:status].present?
-    # render status: :ok, json: { posts: }
     render
   end
 
@@ -28,21 +26,9 @@ class PostsController < ApplicationController
     authorize @post
   end
 
-  # def update
-  #   authorize @post
-  #   @post.update!(post_params)
-  #   render_notice("Post was successfully updated") unless params.key?(:quiet)
-  # end
-
-  # def destroy
-  #   authorize @post
-  #   @post.destroy!
-  #   render_json
-  # end
-
   def update
     authorize @post
-    retries ||= 0
+    retries = 0
     begin
       @post.update!(post_params)
       render_notice("Post was successfully updated") unless params.key?(:quiet)
@@ -58,7 +44,7 @@ class PostsController < ApplicationController
 
   def destroy
     authorize @post
-    retries ||= 0
+    retries = 0
     begin
       @post.destroy!
       render_json
@@ -70,6 +56,24 @@ class PostsController < ApplicationController
         render_error(e.message, :unprocessable_entity)
       end
     end
+  end
+
+  def vote
+    vote_type = params[:vote_type]
+    post_vote = PostVote.find_or_initialize_by(post: @post, user: current_user)
+
+    Post.transaction do
+      perform_voting(post_vote, vote_type)
+      @post.update_bloggable_status!
+    end
+
+    render_json(
+      upvotes: @post.upvotes,
+      downvotes: @post.downvotes,
+      net_votes: @post.net_votes,
+      is_bloggable: @post.is_bloggable,
+      current_user_vote: @post.post_votes.find_by(user: current_user)&.vote_type
+    )
   end
 
   private
@@ -112,5 +116,26 @@ class PostsController < ApplicationController
     def filter_posts_by_user_id(base_scope)
       base_scope = base_scope.includes(user: :organization)
       base_scope.where(user_id: params[:user_id])
+    end
+
+    def perform_voting(post_vote, vote_type)
+      if post_vote.persisted?
+        if vote_type.nil?
+          post_vote.vote_type == "upvote" ? @post.decrement!(:upvotes) : @post.decrement!(:downvotes)
+          post_vote.destroy!
+          return
+        end
+        if post_vote.vote_type == vote_type
+          @post.decrement!(vote_type == "upvote" ? :upvotes : :downvotes)
+          post_vote.destroy!
+        else
+          @post.increment!(vote_type == "upvote" ? :upvotes : :downvotes)
+          @post.decrement!(post_vote.vote_type == "upvote" ? :upvotes : :downvotes)
+          post_vote.update!(vote_type: vote_type)
+        end
+      else
+        @post.increment!(vote_type == "upvote" ? :upvotes : :downvotes)
+        post_vote.update!(vote_type: vote_type)
+      end
     end
 end

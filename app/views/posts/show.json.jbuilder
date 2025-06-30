@@ -10,7 +10,8 @@ json.post do
     :created_at,
     :updated_at,
     :slug,
-    :status
+    :status,
+    :is_bloggable
 
   json.categories @post.categories do |category|
     json.extract! category,
