@@ -8,6 +8,7 @@ class Post < ApplicationRecord
   belongs_to :user
   has_many :post_votes, dependent: :destroy
   has_and_belongs_to_many :categories
+  has_one_attached :report
   # belongs_to :organization, through: :user
 
   validates :title, presence: true, length: { maximum: MAXIMUM_TITLE_LENGTH }

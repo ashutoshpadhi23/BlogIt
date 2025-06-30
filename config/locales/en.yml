@@ -32,3 +32,8 @@ en:
   post:
     slug:
       immutable: "is immutable!"
+  report:
+    render: "Rendering the report"
+    generate: "Generating the PDF report"
+    upload: "Uploading to server"
+    attach: "Attaching the report to the user"

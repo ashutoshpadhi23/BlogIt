@@ -78,3 +78,7 @@ gem "simplecov", require: false, group: :test
 gem "wicked_pdf"
 # wicked_pdf uses the following binary
 gem "wkhtmltopdf-binary"
+
+gem "google-cloud-storage"
+# To load the environment variables
+gem "dotenv-rails"

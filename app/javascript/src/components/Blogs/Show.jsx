@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import postApi from "apis/posts";
-import { PageLoader, Toastr } from "components/commons";
+import createConsumer from "channels/consumer";
+import { subscribeToReportDownloadChannel } from "channels/reportDownloadChannel";
+import { PageLoader } from "components/commons";
+import FileSaver from "file-saver";
 import Logger from "js-logger";
 import { useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
@@ -15,6 +18,12 @@ const Show = () => {
   const history = useHistory();
   const [postUserId, setPostUserId] = useState("");
   const currentUserId = getFromLocalStorage("authUserId");
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState("");
+
+  const consumer = createConsumer();
+  let subscription = null;
 
   const updateTask = () => {
     history.push(`/blogs/${post.slug}/edit`);
@@ -44,22 +53,11 @@ const Show = () => {
     }
   };
 
-  const saveAs = ({ blob, fileName }) => {
-    const objectUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = objectUrl;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    link.parentNode.removeChild(link);
-    setTimeout(() => window.URL.revokeObjectURL(objectUrl), 150);
-  };
-
   const downloadPdf = async slug => {
+    setPageLoading(true);
     try {
-      Toastr.success("Downloading report...");
       const { data } = await postApi.download(slug);
-      saveAs({ blob: data, fileName: "blogit_post_report.pdf" });
+      FileSaver.saveAs(data, "blogit_post_report.pdf");
     } catch (error) {
       Logger.error(error);
     } finally {
@@ -71,16 +69,29 @@ const Show = () => {
     fetchPostDetails();
   }, []);
 
+  useEffect(() => {
+    if (progress === 100 && isDownloadModalOpen) {
+      setIsDownloadModalOpen(false);
+    }
+  }, [progress]);
+
   const handleDownload = slug => {
-    generatePdf(slug);
+    subscription = subscribeToReportDownloadChannel({
+      consumer,
+      setMessage,
+      setProgress,
+      generatePdf,
+      slug,
+    });
+
     setTimeout(() => {
       downloadPdf(slug);
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+      consumer.disconnect();
     }, 5000);
   };
-
-  const message = pageLoading
-    ? "Report is being generated..."
-    : "Report downloaded!";
 
   if (pageLoading) {
     return <PageLoader />;
@@ -90,8 +101,11 @@ const Show = () => {
     <PostDetails
       canEdit={canEdit}
       handleDownload={handleDownload}
+      isDownloadModalOpen={isDownloadModalOpen}
       message={message}
       post={post}
+      progress={progress}
+      setIsDownloadModalOpen={setIsDownloadModalOpen}
       updateTask={updateTask}
     />
   );

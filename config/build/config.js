@@ -19,6 +19,7 @@ const alias = {
   buffer: require.resolve("buffer"),
   stream: require.resolve("stream-browserify"),
   apis: absolutePath("src/apis"),
+  channels: absolutePath("src/channels"),
   common: absolutePath("src/common"),
   commons: absolutePath("src/components/commons"),
   components: absolutePath("src/components"),
