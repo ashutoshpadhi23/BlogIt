@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import postApi from "apis/posts";
-import { PageLoader } from "components/commons";
+import { PageLoader, Toastr } from "components/commons";
+import Logger from "js-logger";
 import { useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 
@@ -35,15 +36,65 @@ const Show = () => {
 
   const canEdit = () => postUserId === currentUserId;
 
+  const generatePdf = async slug => {
+    try {
+      await postApi.generatePdf(slug);
+    } catch (error) {
+      Logger.error(error);
+    }
+  };
+
+  const saveAs = ({ blob, fileName }) => {
+    const objectUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    setTimeout(() => window.URL.revokeObjectURL(objectUrl), 150);
+  };
+
+  const downloadPdf = async slug => {
+    try {
+      Toastr.success("Downloading report...");
+      const { data } = await postApi.download(slug);
+      saveAs({ blob: data, fileName: "blogit_post_report.pdf" });
+    } catch (error) {
+      Logger.error(error);
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchPostDetails();
   }, []);
+
+  const handleDownload = slug => {
+    generatePdf(slug);
+    setTimeout(() => {
+      downloadPdf(slug);
+    }, 5000);
+  };
+
+  const message = pageLoading
+    ? "Report is being generated..."
+    : "Report downloaded!";
 
   if (pageLoading) {
     return <PageLoader />;
   }
 
-  return <PostDetails canEdit={canEdit} post={post} updateTask={updateTask} />;
+  return (
+    <PostDetails
+      canEdit={canEdit}
+      handleDownload={handleDownload}
+      message={message}
+      post={post}
+      updateTask={updateTask}
+    />
+  );
 };
 
 export default Show;

@@ -14,6 +14,11 @@ Rails.application.routes.draw do
       member do
         post :vote
       end
+      # collection do
+      resource :report, only: %i[create], module: :posts do
+        get :download, on: :collection
+      end
+      # end
     end
     resources :users, only: %i[index create show]
     resources :categories, only: %i[index create show], param: :name

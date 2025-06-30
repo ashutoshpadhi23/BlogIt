@@ -1,12 +1,12 @@
 import React from "react";
 
-import { Edit } from "@bigbinary/neeto-icons";
+import { Download, Edit } from "@bigbinary/neeto-icons";
 import Profile from "commons/Profile";
 import { Button, Tag } from "neetoui";
 import { formatDate } from "utils/formatDate";
 import toTitleCase from "utils/toTitleCase";
 
-const PostDetails = ({ post, updateTask, canEdit = false }) => (
+const PostDetails = ({ post, updateTask, handleDownload, canEdit = false }) => (
   <div>
     <div className="flex flex-col gap-y-8">
       <div className="flex space-x-2">
@@ -24,6 +24,16 @@ const PostDetails = ({ post, updateTask, canEdit = false }) => (
           />
         </div>
         <div className="flex items-center justify-end gap-x-3">
+          <Button
+            icon={Download}
+            size="large"
+            style="tertiary"
+            tooltipProps={{
+              content: "Download blog report",
+              position: "top",
+            }}
+            onClick={() => handleDownload(post.slug)}
+          />
           {canEdit() && (
             <Button
               icon={Edit}

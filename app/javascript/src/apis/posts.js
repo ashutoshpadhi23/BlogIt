@@ -23,6 +23,20 @@ const destroy = ({ slug, quiet = false }) => {
 
 const vote = (slug, payload) => axios.post(`/posts/${slug}/vote`, payload);
 
-const postApi = { fetch, show, create, update, destroy, vote };
+const generatePdf = slug => axios.post(`/posts/${slug}/report`, {});
+
+const download = slug =>
+  axios.get(`/posts/${slug}/report/download`, { responseType: "blob" });
+
+const postApi = {
+  fetch,
+  show,
+  create,
+  update,
+  destroy,
+  vote,
+  generatePdf,
+  download,
+};
 
 export default postApi;

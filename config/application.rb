@@ -28,5 +28,7 @@ module BlogIt
     config.generators do |g|
       g.test_framework :test_unit, fixture: false
     end
+    config.active_job.queue_adapter = :sidekiq
+    Sidekiq.strict_args!(false)
   end
 end
